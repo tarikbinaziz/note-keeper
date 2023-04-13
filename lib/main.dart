@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:note_keeper/screens/notes_details.dart';
-
 import 'screens/notes_home.dart';
 
 void main() {

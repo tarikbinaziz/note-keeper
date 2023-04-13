@@ -8,15 +8,20 @@ class NotesListHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    navigateToDetails(String title){
+      return Navigator.push(context, MaterialPageRoute(builder: (context)=>NoteDetails(title)));
+
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text("Notes"),
       ),
       floatingActionButton: FloatingActionButton(onPressed: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>NoteDetails()));
+        navigateToDetails("Add Note");
       },child: Icon(Icons.add),),
       body: ListView.builder(
-        itemCount: count,
+        itemCount: 10,
           itemBuilder: (_,index){
           return Card(
             elevation: 2,
@@ -29,11 +34,16 @@ class NotesListHome extends StatelessWidget {
               title: Text("dummy"),
               subtitle: Text("dummy"),
               trailing: Icon(Icons.delete,color: Colors.red,),
-              onTap: (){},
+              onTap: (){
+                navigateToDetails("Edit Note");
+              },
 
             ),
           );
-          }),
+          }
+
+          ),
     );
   }
+
 }

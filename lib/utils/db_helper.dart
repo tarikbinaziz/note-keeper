@@ -6,8 +6,8 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseHelper {
 
   DatabaseHelper._createInstantiate();
-  static late DatabaseHelper _databaseHelper;
-  static late Database _database;
+  static  DatabaseHelper? _databaseHelper;
+  static  Database? _database;
   String tableName = "note_table";
   String colId = "id";
   String colTitle = "title";
@@ -19,7 +19,7 @@ class DatabaseHelper {
     if (_databaseHelper == null) {
       _databaseHelper = DatabaseHelper._createInstantiate();
     }
-    return _databaseHelper;
+    return _databaseHelper!;
   }
 
   Future<Database> get database async{
@@ -27,7 +27,7 @@ class DatabaseHelper {
     if(_database==null){
       _database=await initializeDatabase();
     }
-    return _database;
+    return _database!;
 
   }
 
@@ -41,9 +41,8 @@ class DatabaseHelper {
 
   void _onCreate(Database db, int newVersion) {
     db.execute(
-        "CREATE TABLE $tableName($colId INTERGER PRIMARY KEY AUTOINCREMENT,$colTitle TEXT,$colDes TEXt,$colPriority INTEGER,$colDate TEXT)");
+        "CREATE TABLE $tableName($colId INTERGER PRIMARY KEY AUTOINCREMENT,$colTitle TEXT,$colDes TEXT,$colPriority INTEGER,$colDate TEXT)");
   }
-
   //fetch data
 Future<List<Map<String,dynamic>>>fetchNote()async{
     Database db=await this.database;
@@ -57,25 +56,40 @@ Future<int>insertNote(NoteModel note)async{
     var result=db.insert(tableName,note.toMap());
     return result;
 }
+
 //update data
 Future<int>updateNote(NoteModel note)async{
     Database db=await this.database;
     var result=db.update(tableName,note.toMap(),where: "$colId= ?",whereArgs:[note.id] );
     return result;
 }
+
 //delete data
 Future<int>deleteNote(int id)async{
     Database db=await this.database;
     var result=db.rawDelete("DELETE FROM $tableName WHERE $colId=$id" );
     return result;
 }
-//get the number of notes
 
+
+//get the number of notes
 Future<int?>getCount()async{
     Database db=await this.database;
-    List<Map<String,dynamic>> x=await db.rawQuery("SELECT COUNT (*) from $tableName");
-int? result=Sqflite.firstIntValue(x);
+    List<Map<String,dynamic>> x = await db.rawQuery("SELECT COUNT (*) from $tableName");
+    int? result=Sqflite.firstIntValue(x);
     return result;
+}
+
+Future <List<NoteModel>> getNoteList() async{
+    var noteMapList= await fetchNote();
+    var count=noteMapList.length;
+   var noteList=<NoteModel>[];
+   for(int i=0; i<count;i++){
+     noteList.add(NoteModel.fromMapObject(noteMapList[i]));
+
+   }
+   return noteList;
+
 }
 
 }
